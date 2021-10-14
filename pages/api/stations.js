@@ -8,7 +8,14 @@ export const handler = async (req, res) => {
         { headers },
       )).json()
     if (response.code) throw response
-    res.status(200).json(response)
+    const stations = response.map(station => ({
+      id: station.StationID,
+      name: {
+        tw: station.StationName.Zh_tw,
+        en: station.StationName.En,
+      }
+    }))
+    res.status(200).json(stations)
   } catch (error) {
     res.status(500).json({ message: `Something wrong` })
   }
