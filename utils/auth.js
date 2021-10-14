@@ -1,8 +1,7 @@
 import jsSHA from 'jssha'
 
 const getAuthorizationHeader = () => {
-  const APP_ID = ''
-  const APP_KEY = ''
+  const { APP_ID, APP_KEY } = process.env
 
   const gmtString = new Date().toGMTString()
   const shaObj = new jsSHA('SHA-1', 'TEXT')
