@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { getLiveBoard, getStations } from '../utils/apis'
 
 const STATION_TAIPEI_ID = '1000'
@@ -60,6 +61,12 @@ const Home = ({ stations, defaultLive }) => {
           </select>
         </div>
         <LiveBoard datas={liveBorad} />
+        <div className="flex-shrink-0 flex-row py-3 text-center">
+          資料來源 交通部PTX服務平臺
+          <a href="https://ptx.transportdata.tw/" target="_blank">
+            <Image height="16px" width="28px" src="https://ptx.transportdata.tw/PTX/logo.jpg" />
+          </a>
+        </div>
       </div>
     </div>
   )
