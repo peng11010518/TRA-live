@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { getLiveBoard, getStations } from '../utils/apis'
 
@@ -41,7 +41,6 @@ const LiveBoard = ({ datas }) => (
 
 const Home = ({ stations, defaultLive }) => {
   const [liveBorad, setLiveBoard] = useState(defaultLive)
-  useEffect(() => { console.log(liveBorad) }, [liveBorad])
 
   return (
     <div className="container mx-auto sm:px-2 md:px-4 py-2 lg:px-8 py-4 w-screen">

@@ -20,7 +20,6 @@ export const handler = async (req, res) => {
         { headers },
       )).json()
     if (response.code) throw response
-    console.log(response)
     const live = response.map(train => ({
       id: train.TrainNo,
       direction: train.Direction,
