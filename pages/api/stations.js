@@ -15,7 +15,7 @@ export const handler = async (req, res) => {
         en: station.StationName.En,
       }
     }))
-    res.status(200).json(stations)
+    res.status(200).json(JSON.stringify(stations))
   } catch (error) {
     res.status(500).json({ message: `Something wrong` })
   }

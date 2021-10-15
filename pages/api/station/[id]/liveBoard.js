@@ -31,7 +31,7 @@ export const handler = async (req, res) => {
       scheduledDepartureTime: train.ScheduledDepartureTime.slice(0, -3),
       delayTime: train.DelayTime,
     }))
-    res.status(200).json(live)
+    res.status(200).json(JSON.stringify(live))
   } catch (error) {
     res.status(500).json({ message: `Something wrong` })
   }

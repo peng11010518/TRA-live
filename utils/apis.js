@@ -1,4 +1,4 @@
-const server = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'prod_host'
+const server = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : `https://${process.env.VERCEL_URL}`
 
 export const getLiveBoard = async (stationId) => {
   const res = await fetch(`${server}/api/station/${stationId}/liveBoard`)
