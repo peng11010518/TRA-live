@@ -43,6 +43,7 @@ const LiveBoard = ({ datas }) => (
 
 const Home = ({ stations, defaultLive }) => {
   const [liveBorad, setLiveBoard] = useState(defaultLive)
+  console.log(liveBorad)
 
   return (
     <div className="container mx-auto sm:px-2 md:px-4 py-2 lg:px-8 py-4 w-screen">

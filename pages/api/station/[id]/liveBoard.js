@@ -11,10 +11,10 @@ const trainTypeList = {
   '10': '區間快',
 }
 
-export const handler = (req, res) => {
+export const handler = async (req, res) => {
   const { id } = req.query
   try {
-    const live = getLiveBoardServerSide(id)
+    const live = await getLiveBoardServerSide(id)
     res.status(200).json(JSON.stringify(live))
   } catch (error) {
     res.status(500).json({ message: `Something wrong` })
