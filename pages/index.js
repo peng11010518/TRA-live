@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { getLiveBoard, getStations } from '../utils/apis'
+import { getStationsServerSide } from './api/stations'
+import { getLiveBoardServerSide } from './api/station/[id]/liveBoard'
+import { getLiveBoard } from '../utils/apis'
 
 const STATION_TAIPEI_ID = '1000'
 
@@ -72,8 +74,8 @@ const Home = ({ stations, defaultLive }) => {
 }
 
 export async function getStaticProps() {
-  const stations = await getStations()
-  const defaultLive = await getLiveBoard(STATION_TAIPEI_ID)
+  const stations = await getStationsServerSide()
+  const defaultLive = await getLiveBoardServerSide(STATION_TAIPEI_ID)
   return {
     props: {
       stations,
