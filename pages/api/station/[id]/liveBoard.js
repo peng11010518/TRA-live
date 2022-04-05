@@ -1,5 +1,6 @@
 import headers from '../../../../utils/auth'
 
+// TODO: Get Code from API
 const trainTypeList = {
   '1': '太魯閣',
   '2': '普悠瑪',
@@ -9,6 +10,7 @@ const trainTypeList = {
   '6': ' 區間 ',
   '7': ' 普快 ',
   '10': '區間快',
+  '11': ' 自強 ',
 }
 
 export const handler = async (req, res) => {
@@ -31,7 +33,7 @@ export const getLiveBoardServerSide = async (id) => {
   const live = response.map(train => ({
     id: train.TrainNo,
     direction: train.Direction,
-    trainType: trainTypeList[train.TrainTypeCode],
+    trainType: trainTypeList[train.TrainTypeCode] || '',
     endingStationName: {
       tw: train.EndingStationName.Zh_tw,
       en: train.EndingStationName.En,
