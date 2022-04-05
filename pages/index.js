@@ -2,25 +2,39 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { getStationsServerSide } from './api/stations'
 import { getLiveBoardServerSide } from './api/station/[id]/liveBoard'
-import { getLiveBoard } from '../utils/apis'
+import { getTimetableBoardServerSide } from './api/station/[id]/timeTable'
+import { getLiveBoard, getTimetableBoard } from '../utils/apis'
+import { mergeLiveToTimeTable } from '../utils/tools'
 
 const STATION_TAIPEI_ID = '1000'
 
-const TrainCard = ({ train }) => (
-  <div className="p-4 max-w-xs mx-auto bg-white rounded-xl shadow-sm flex items-center space-x-4 my-2 flex flex-row">
-    <div className="flex-1 flex-col">
-      <div className="text-xl font-medium text-black">{train.scheduledDepartureTime}</div>
-      <p className="text-gray-500">{train.endingStationName.tw}</p>
+const TrainCard = ({ train }) => {
+  const endingStationName = train.endingStationName.tw
+  return (
+    <div className="flex flex-row p-4 my-2 bg-white rounded-xl shadow-sm items-center justify-between h-24">
+      <div className="flex-1 flex-col max-w-[40%]">
+        <div className="text-xl font-medium text-black">{train.scheduledDepartureTime}</div>
+        {endingStationName.includes('-') || endingStationName.length > 3
+          ? endingStationName.split('-').map((name, index) =>
+            <p className="text-gray-500 text-xs" key={`${name}-${index}`}>{name}</p>)
+          : <p className="text-gray-500">{endingStationName}</p>}
+      </div>
+      <div className="flex-shrink-0 flex-col min-w-[50%] sm:min-w-[30%] text-center">
+        <p className="text-gray-300 text-xl">{train.trainType}</p>
+        {(() => {
+          switch (train.delayTime) {
+            case undefined:
+              return
+            case 0:
+              return <div className="text-sm py-1 px-3 mt-2 bg-emerald-400 rounded-xl text-white">on Time</div>
+            default:
+              return <div className="text-sm py-1 px-3 mt-2 bg-rose-500 rounded-xl text-white">{train.delayTime} min</div>
+          }
+        })()}
+      </div>
     </div>
-    <div className="flex-shrink-0 flex-col min-w-[30%] text-center">
-      <p className="text-gray-300 text-xl">{train.trainType}</p>
-      {train.delayTime
-        ? <div className="text-sm py-1 px-3 mt-2 bg-rose-500 rounded-xl text-white">{train.delayTime} min</div>
-        : <div className="text-sm py-1 px-3 mt-2 bg-emerald-400 rounded-xl text-white">on Time</div>
-      }
-    </div>
-  </div>
-)
+  )
+}
 
 const LiveBoard = ({ datas }) => (
   <div className="flex flex-row p-3 space-x-4">
@@ -39,9 +53,8 @@ const LiveBoard = ({ datas }) => (
   </div>
 )
 
-const Home = ({ stations, defaultLive }) => {
-  const [liveBorad, setLiveBoard] = useState(defaultLive)
-  console.log(liveBorad)
+const Home = ({ stations, defaultBoard }) => {
+  const [liveBoard, setLiveBoard] = useState(defaultBoard)
 
   return (
     <div className="container mx-auto sm:px-2 md:px-4 py-2 lg:px-8 py-4 w-screen">
@@ -54,7 +67,10 @@ const Home = ({ stations, defaultLive }) => {
             defaultValue={STATION_TAIPEI_ID}
             onChange={async (e) => {
               const value = e.target.value
-              setLiveBoard(await getLiveBoard(value))
+              const timeTable = await getTimetableBoard(value)
+              const live = await getLiveBoard(value)
+              const table = mergeLiveToTimeTable({ live, timeTable })
+              setLiveBoard(table)
             }}
           >
             {stations.map(station => (
@@ -62,7 +78,7 @@ const Home = ({ stations, defaultLive }) => {
             ))}
           </select>
         </div>
-        <LiveBoard datas={liveBorad} />
+        <LiveBoard datas={liveBoard} />
         <div className="flex-row py-3 text-center">
           <p className="text-slate-700">
             {'資料來源 '}
@@ -80,11 +96,13 @@ const Home = ({ stations, defaultLive }) => {
 
 export async function getStaticProps() {
   const stations = await getStationsServerSide()
-  const defaultLive = await getLiveBoardServerSide(STATION_TAIPEI_ID)
+  const live = await getLiveBoardServerSide(STATION_TAIPEI_ID)
+  const timeTable = await getTimetableBoardServerSide(STATION_TAIPEI_ID)
+  const defaultBoard = mergeLiveToTimeTable({ live, timeTable })
   return {
     props: {
       stations,
-      defaultLive,
+      defaultBoard,
     },
   }
 }

@@ -1,9 +1,4 @@
 @import url(//fonts.googleapis.com/css?family=Noto+Sans+TC);
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@layer base {
-  html {
-    font-family: 'Noto Sans TC', '微軟正黑體', sans-serif;
-  }
+html {
+  font-family: 'Noto Sans TC', '微軟正黑體', sans-serif;
 }

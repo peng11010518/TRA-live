@@ -26,20 +26,13 @@ export const handler = async (req, res) => {
 export const getLiveBoardServerSide = async (id) => {
   const response = await (
     await fetch(
-      `${process.env.TRA_API_HOST}/LiveBoard/Station/${id}?$top=30000&$format=JSON`,
+      `${process.env.TRA_API_V2_HOST}/LiveBoard/Station/${id}?$top=30000&$format=JSON`,
       { headers },
     )).json()
   if (response.code) throw response
   const live = response.map(train => ({
     id: train.TrainNo,
-    direction: train.Direction,
-    trainType: trainTypeList[train.TrainTypeCode] || '',
-    endingStationName: {
-      tw: train.EndingStationName.Zh_tw,
-      en: train.EndingStationName.En,
-    },
-    scheduledDepartureTime: train.ScheduledDepartureTime.slice(0, -3),
-    delayTime: train.DelayTime,
+    delayTime: train.DelayTime || 0,
   }))
   return live
 }

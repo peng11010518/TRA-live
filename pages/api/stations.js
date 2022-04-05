@@ -12,11 +12,12 @@ export const handler = async (req, res) => {
 export const getStationsServerSide = async () => {
   const response = await (
     await fetch(
-      `${process.env.TRA_API_HOST}/Station?$top=30000&$format=JSON`,
+      `${process.env.TRA_API_V3_HOST}/Station?$top=30000&$format=JSON`,
       { headers },
     )).json()
+  // console.log(response)
   if (response.code) throw response
-  const stations = response.map(station => ({
+  const stations = response.Stations.map(station => ({
     id: station.StationID,
     name: {
       tw: station.StationName.Zh_tw,
