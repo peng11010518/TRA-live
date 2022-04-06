@@ -57,26 +57,28 @@ const Home = ({ stations, defaultBoard }) => {
   const [liveBoard, setLiveBoard] = useState(defaultBoard)
 
   return (
-    <div className="container mx-auto sm:px-2 md:px-4 py-2 lg:px-8 py-4 w-screen">
+    <div className="container mx-auto sm:px-2 md:px-4 lg:px-8 w-screen">
       <div className="flex flex-col">
-        <div className="flex flex-row justify-between p-3">
-          <Image className="basis-1/4" alt="logo" height="58px" width="116px" src="/logo.jpg" />
-          <div className="basis-2/4"></div>
-          <select
-            className="basis-1/4 block py-4 rounded-xl border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50"
-            defaultValue={STATION_TAIPEI_ID}
-            onChange={async (e) => {
-              const value = e.target.value
-              const timeTable = await getTimetableBoard(value)
-              const live = await getLiveBoard(value)
-              const table = mergeLiveToTimeTable({ live, timeTable })
-              setLiveBoard(table)
-            }}
-          >
-            {stations.map(station => (
-              <option value={station.id} key={station.id}>{station.name.tw}</option>
-            ))}
-          </select>
+        <div className="sticky top-0 py-2 bg-white">
+          <div className="flex flex-row justify-between p-3">
+            <Image className="basis-1/4" alt="logo" height="58px" width="116px" src="/logo.jpg" />
+            <div className="basis-2/4"></div>
+            <select
+              className="basis-1/4 block py-4 rounded-xl border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50"
+              defaultValue={STATION_TAIPEI_ID}
+              onChange={async (e) => {
+                const value = e.target.value
+                const timeTable = await getTimetableBoard(value)
+                const live = await getLiveBoard(value)
+                const table = mergeLiveToTimeTable({ live, timeTable })
+                setLiveBoard(table)
+              }}
+            >
+              {stations.map(station => (
+                <option value={station.id} key={station.id}>{station.name.tw}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <LiveBoard datas={liveBoard} />
         <div className="flex-row py-3 text-center">
