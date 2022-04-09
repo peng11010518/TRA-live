@@ -62,17 +62,20 @@ const StationSelect = ({ stations, handleChange }) => (
 const Home = ({ stations, defaultBoard }) => {
   const [liveBoard, setLiveBoard] = useState([])
   const [timeBoard, setTimeBoard] = useState([])
+  const [station, setStation] = useState('')
   const [board, setBoard] = useState(defaultBoard)
 
-  const handleStationChange = async (id) => {
-    const timeTable = await getTimetableBoard(id)
-    const liveTable = await getLiveBoard(id)
-    setLiveBoard(liveTable)
-    setTimeBoard(timeTable)
-  }
+  useEffect(async () => {
+    if (station) {
+      const timeTable = await getTimetableBoard(station)
+      const liveTable = await getLiveBoard(station)
+      setLiveBoard(liveTable)
+      setTimeBoard(timeTable)
+    }
+  }, [station])
 
   useEffect(() => {
-    if (liveBoard.length && timeBoard.directionRight.length && timeBoard.directionLeft.length) {
+    if (liveBoard.length && timeBoard.directionRight?.length && timeBoard.directionLeft?.length) {
       const table = {
         directionRight: getTableAfterLive({ liveBoard, timeBoard: timeBoard.directionRight }),
         directionLeft: getTableAfterLive({ liveBoard, timeBoard: timeBoard.directionLeft }),
@@ -88,7 +91,7 @@ const Home = ({ stations, defaultBoard }) => {
           <div className="flex flex-row justify-between p-3">
             <Image className="basis-1/4" alt="logo" height="58px" width="116px" src="/logo.jpg" />
             <div className="basis-2/4"></div>
-            <StationSelect stations={stations} handleChange={handleStationChange} />
+            <StationSelect stations={stations} handleChange={setStation} />
           </div>
         </div>
         <TrainBoard datas={board} />

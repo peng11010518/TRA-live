@@ -3,6 +3,8 @@ import dayjs from 'dayjs'
 const utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
 
+const today = dayjs().format('YYYY/MM/DD')
+
 export const gmtString = dayjs().utc().format('ddd, DD MMM YYYY HH:mm:ss [GMT]')
 
 export const mergeLiveToTimeTable = ({ liveBoard, timeBoard }) => (
@@ -15,19 +17,15 @@ export const mergeLiveToTimeTable = ({ liveBoard, timeBoard }) => (
 
 export const getTableAfterLive = ({ liveBoard, timeBoard }) => {
   let islive = false
-  let direction = 0
   return (
     timeBoard.map(timeTableTrain => {
-      if (direction !== timeTableTrain.direction) {
-        direction = timeTableTrain.direction
-        islive = false
-      }
       const liveTrain = liveBoard.find(live => live.id === timeTableTrain.id)
+      const isNotPass = dayjs().isBefore(`${today} ${timeTableTrain.scheduledDepartureTime}`, 'minute')
       if (liveTrain) {
         islive = true
         return ({ ...timeTableTrain, ...liveTrain })
       }
-      if (islive) return timeTableTrain
+      if (islive || isNotPass) return timeTableTrain
     }).filter(item => item)
   )
 }
