@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { getStationsServerSide } from './api/stations'
 import { getLiveBoardServerSide } from './api/station/[id]/liveBoard'
@@ -36,7 +36,7 @@ const TrainCard = ({ train }) => {
   )
 }
 
-const LiveBoard = ({ datas }) => (
+const TrainBoard = ({ datas }) => (
   <div className="flex flex-row p-3 space-x-4">
     <div className="flex-1">
       {datas
@@ -54,7 +54,16 @@ const LiveBoard = ({ datas }) => (
 )
 
 const Home = ({ stations, defaultBoard }) => {
-  const [liveBoard, setLiveBoard] = useState(defaultBoard)
+  const [liveBoard, setLiveBoard] = useState([])
+  const [timeBoard, setTimeBoard] = useState([])
+  const [board, setBoard] = useState(defaultBoard)
+
+  useEffect(() => {
+    if (liveBoard && timeBoard) {
+      const table = mergeLiveToTimeTable({ liveBoard, timeBoard })
+      setBoard(table)
+    }
+  }, [liveBoard, timeBoard])
 
   return (
     <div className="container mx-auto sm:px-2 md:px-4 lg:px-8 w-screen">
@@ -70,8 +79,8 @@ const Home = ({ stations, defaultBoard }) => {
                 const value = e.target.value
                 const timeTable = await getTimetableBoard(value)
                 const live = await getLiveBoard(value)
-                const table = mergeLiveToTimeTable({ live, timeTable })
-                setLiveBoard(table)
+                setLiveBoard(live)
+                setTimeBoard(timeTable)
               }}
             >
               {stations.map(station => (
@@ -80,7 +89,7 @@ const Home = ({ stations, defaultBoard }) => {
             </select>
           </div>
         </div>
-        <LiveBoard datas={liveBoard} />
+        <TrainBoard datas={board} />
         <div className="flex-row py-3 text-center">
           <p className="text-slate-700">
             {'資料來源 '}
@@ -98,9 +107,9 @@ const Home = ({ stations, defaultBoard }) => {
 
 export async function getStaticProps() {
   const stations = await getStationsServerSide()
-  const live = await getLiveBoardServerSide(STATION_TAIPEI_ID)
-  const timeTable = await getTimetableBoardServerSide(STATION_TAIPEI_ID)
-  const defaultBoard = mergeLiveToTimeTable({ live, timeTable })
+  const liveBoard = await getLiveBoardServerSide(STATION_TAIPEI_ID)
+  const timeBoard = await getTimetableBoardServerSide(STATION_TAIPEI_ID)
+  const defaultBoard = mergeLiveToTimeTable({ liveBoard, timeBoard })
   return {
     props: {
       stations,
