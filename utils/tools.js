@@ -15,17 +15,12 @@ export const mergeLiveToTimeTable = ({ liveBoard, timeBoard }) => (
   })
 )
 
-export const getTableAfterLive = ({ liveBoard, timeBoard }) => {
-  let islive = false
-  return (
+export const getTableAfterLive = ({ liveBoard, timeBoard }) => (
     timeBoard.map(timeTableTrain => {
       const liveTrain = liveBoard.find(live => live.id === timeTableTrain.id)
-      const isNotPass = dayjs().locale('zh-tw').isBefore(`${today} ${timeTableTrain.scheduledDepartureTime}`, 'minute')
-      if (liveTrain) {
-        islive = true
-        return ({ ...timeTableTrain, ...liveTrain })
-      }
-      if (islive || isNotPass) return timeTableTrain
+      const tarinTime = dayjs(`${today} ${timeTableTrain.scheduledDepartureTime}:00 +0800`)
+      const isNotPass = dayjs().isBefore(tarinTime)
+      if (liveTrain) return ({ ...timeTableTrain, ...liveTrain })
+      if (isNotPass) return timeTableTrain
     }).filter(item => item)
-  )
-}
+)
