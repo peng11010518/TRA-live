@@ -20,7 +20,7 @@ export const getTableAfterLive = ({ liveBoard, timeBoard }) => {
   return (
     timeBoard.map(timeTableTrain => {
       const liveTrain = liveBoard.find(live => live.id === timeTableTrain.id)
-      const isNotPass = dayjs().isBefore(`${today} ${timeTableTrain.scheduledDepartureTime}`, 'minute')
+      const isNotPass = dayjs().locale('zh-tw').isBefore(`${today} ${timeTableTrain.scheduledDepartureTime}`, 'minute')
       if (liveTrain) {
         islive = true
         return ({ ...timeTableTrain, ...liveTrain })
