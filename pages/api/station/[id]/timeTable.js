@@ -24,25 +24,24 @@ export const handler = async (req, res) => {
   }
 }
 
+const getTransfered = res => res.map(train => ({
+  id: train.TrainNo,
+  trainType: trainTypeList[train.TrainTypeCode] || '',
+  endingStationName: train.DestinationStationName.Zh_tw,
+  scheduledDepartureTime: train.DepartureTime,
+}))
+
 export const getTimetableBoardServerSide = async (id) => {
-  const today = dayjs().format('YYYY-MM-DD')
   const response = await (
     await fetch(
-      `${process.env.TRA_API_V2_HOST}/DailyTimetable/Station/${id}/${today}?$format=json`,
+      `${process.env.TRA_API_V3_HOST}/DailyStationTimetable/Today/Station/${id}?$format=json`,
       { headers },
     )).json()
-  if (response.code) throw response
-  const timetable = response.map(train => ({
-    id: train.TrainNo,
-    direction: train.Direction,
-    trainType: trainTypeList[train.TrainTypeCode] || '',
-    endingStationName: {
-      tw: train.EndingStationName.Zh_tw,
-      en: train.EndingStationName.En,
-    },
-    scheduledDepartureTime: train.DepartureTime,
-  }))
-  return timetable
+  const [right, left] = response.StationTimetables
+  return ({
+    directionRight: getTransfered(right.TimeTables),
+    directionLeft: getTransfered(left.TimeTables),
+  })
 }
 
 export default handler

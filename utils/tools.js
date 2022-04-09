@@ -12,3 +12,22 @@ export const mergeLiveToTimeTable = ({ liveBoard, timeBoard }) => (
     return timeTableTrain
   })
 )
+
+export const getTableAfterLive = ({ liveBoard, timeBoard }) => {
+  let islive = false
+  let direction = 0
+  return (
+    timeBoard.map(timeTableTrain => {
+      if (direction !== timeTableTrain.direction) {
+        direction = timeTableTrain.direction
+        islive = false
+      }
+      const liveTrain = liveBoard.find(live => live.id === timeTableTrain.id)
+      if (liveTrain) {
+        islive = true
+        return ({ ...timeTableTrain, ...liveTrain })
+      }
+      if (islive) return timeTableTrain
+    }).filter(item => item)
+  )
+}
